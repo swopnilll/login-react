@@ -6,6 +6,9 @@ import { useEffect, useRef, useState } from "react"
 import { USER_REGEX, PWD_REGEX } from "../utils/regex"
 
 import registerBgImage from "../images/allergy-care.jpg"
+import axios from "../api/axios";
+
+const REGISTER_URL = '/todos/1';
 
 export const Register = () => {
 
@@ -44,6 +47,38 @@ export const Register = () => {
         setErrorMessage("")
     }, [user, password, matchedPassword])
 
+    const handleSubmit = async (e: any) => {
+        console.log("Form submited")
+        e.preventDefault();
+        try {
+            const users = await fetch("http://localhost:3009/users",
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        name: "prats",
+                        email: "prats@gmail.com",
+                        password: "B@neshwor10"
+                    }),
+                    headers: { 'Content-Type': 'application/json' }
+                },
+            )
+
+            setSuccess(true);
+            setUser('');
+            setPassword('');
+            setMatchedPassword('');
+        } catch (err: any) {
+            if (!err?.response) {
+                setErrorMessage('No Server Response');
+            } else if (err.response?.status === 409) {
+                setErrorMessage('Username Taken');
+            } else {
+                setErrorMessage('Registration Failed')
+            }
+            errRef?.current?.focus();
+        }
+    }
+
     return (
         <div className="register-page-wrapper">
             <div className="register-page-image">
@@ -62,7 +97,7 @@ export const Register = () => {
 
                         <p ref={errRef} className={errorMessage ? "errmsg" : "offscreen"} aria-live="assertive">{errorMessage}</p>
                         <h1>Register</h1>
-                        <form >
+                        <form onSubmit={handleSubmit}>
                             <label htmlFor="username">
                                 Username:
                                 <FontAwesomeIcon icon={faCheck} className={isValidName ? "valid" : "hide"} />
