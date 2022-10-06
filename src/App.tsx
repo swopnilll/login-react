@@ -1,4 +1,4 @@
-import { RouterSetup } from "./Router";
+import { RouterSetup } from "./Routes";
 
 export const App = () => {
     return (

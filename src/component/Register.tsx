@@ -5,8 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react"
 import { USER_REGEX, PWD_REGEX } from "../utils/regex"
 
-import registerBgImage from "../images/allergy-care.jpg"
-import axios from "../api/axios";
 
 const REGISTER_URL = '/todos/1';
 
@@ -80,10 +78,7 @@ export const Register = () => {
     }
 
     return (
-        <div className="register-page-wrapper">
-            <div className="register-page-image">
-                <img src={registerBgImage} alt="register-page-landing"></img>
-            </div>
+        <div className="register-component">
             {
                 success ? (
                     <section>
