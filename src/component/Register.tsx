@@ -1,9 +1,9 @@
-
+import { Link } from 'react-router-dom'
 
 import { faCheck, faInfoCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react"
-import { USER_REGEX, PWD_REGEX } from "../utils/regex"
+import { USER_REGEX, PWD_REGEX, EMAIL_REGEX } from "../utils/regex"
 
 
 const REGISTER_URL = '/todos/1';
@@ -16,6 +16,9 @@ export const Register = () => {
     const [user, setUser] = useState("");
     const [isValidName, setValidNameStatus] = useState(false);
     const [isUserFocus, setUserFocus] = useState(false);
+
+    const [email, setEmail] = useState("");
+    const [isValidEmail, setIsValidEmailStatus] = useState(false);
 
     const [password, setPassword] = useState("");
     const [isValidPassword, setValidPasswordStatus] = useState(false);
@@ -37,29 +40,40 @@ export const Register = () => {
     }, [user]);
 
     useEffect(() => {
+        setIsValidEmailStatus(EMAIL_REGEX.test(email));
+    }, [email]);
+
+    useEffect(() => {
         setValidPasswordStatus(PWD_REGEX.test(password));
         setIsMatchPasswordValidStatus(password === matchedPassword);
     }, [password, matchedPassword]);
 
     useEffect(() => {
         setErrorMessage("")
-    }, [user, password, matchedPassword])
+    }, [user, email, password, matchedPassword])
 
     const handleSubmit = async (e: any) => {
         console.log("Form submited")
+        console.log({
+            name: user,
+            password,
+            email
+        })
         e.preventDefault();
         try {
-            const users = await fetch("http://localhost:3009/users",
+            const users = await fetch("http://localhost:3010/register",
                 {
                     method: "POST",
                     body: JSON.stringify({
-                        name: "prats",
-                        email: "prats@gmail.com",
-                        password: "B@neshwor10"
+                        name: user,
+                        email,
+                        password
                     }),
                     headers: { 'Content-Type': 'application/json' }
                 },
             )
+
+            console.log(users);
 
             setSuccess(true);
             setUser('');
@@ -84,7 +98,7 @@ export const Register = () => {
                     <section>
                         <h1>Success!</h1>
                         <p>
-                            <a href="#">Sign In</a>
+                            <Link to="/">Login </Link>
                         </p>
                     </section>
                 ) : (
@@ -112,6 +126,28 @@ export const Register = () => {
                                 onBlur={() => setUserFocus(false)}
                             />
                             <p id="uidnote" className={isUserFocus && user && !isValidName ? "instructions" : "offscreen"}>
+                                <FontAwesomeIcon icon={faInfoCircle} />
+                                4 to 24 characters.<br />
+                                Must begin with a letter.<br />
+                                Letters, numbers, underscores, hyphens allowed.
+                            </p>
+
+                            <label htmlFor="email">
+                                Email:
+                                <FontAwesomeIcon icon={faCheck} className={isValidEmail ? "valid" : "hide"} />
+                                <FontAwesomeIcon icon={faTimes} className={isValidEmail || !email ? "hide" : "invalid"} />
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                autoComplete="off"
+                                onChange={(e) => setEmail(e.target.value)}
+                                value={email}
+                                required
+                                aria-invalid={isValidEmail ? "false" : "true"}
+                                aria-describedby="uidnote"
+                            />
+                            <p id="uidnote" className={email && !isValidEmail ? "instructions" : "offscreen"}>
                                 <FontAwesomeIcon icon={faInfoCircle} />
                                 4 to 24 characters.<br />
                                 Must begin with a letter.<br />
@@ -172,8 +208,7 @@ export const Register = () => {
                         <p>
                             Already registered?<br />
                             <span className="line">
-                                {/*put router link here*/}
-                                <a href="#">Sign In</a>
+                                <Link to="/">Login </Link>
                             </span>
                         </p>
 
