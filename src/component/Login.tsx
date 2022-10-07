@@ -1,41 +1,55 @@
 import { Link } from 'react-router-dom'
-import { useState } from "react"
+import { useState, useContext } from "react"
+
+import axios from "axios";
+
+import AuthContext from '../context/AuthProvider';
+import { useEffect } from 'react';
+
+const baseURL = "http://localhost:3011/login";
 
 export const Login = () => {
 
+  const { setAuthenticatedUser } = useContext(AuthContext) as AuthProviderContextProps;
+
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
-
 
   const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: any) => {
-    console.log("Form submited")
     e.preventDefault();
 
-    console.log({ email, password })
     try {
-      const loginResponse = await fetch("http://localhost:3011/login",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email,
-            password
-          }),
-          headers: { 'Content-Type': 'application/json' }
-        },
-      )
+      let apiResponse:UserAuth = {
+        id: 0,
+        email: '',
+        name: '',
+        accessToken: ''
+      };
 
-      console.log(loginResponse);
-      setSuccess(true);
+      await axios
+        .post(baseURL, {
+          email,
+          password
+        })
+        .then((response) => {
+          apiResponse = response?.data?.data;
+          setSuccess(true);
+        });
+
+      setAuthenticatedUser({ id: apiResponse?.id, accessToken: apiResponse?.accessToken, name: apiResponse?.name, email: apiResponse?.email })
+
     } catch (err: any) {
       if (!err?.response) {
         setErrorMessage('No Server Response');
       } else if (err.response?.status === 409) {
-        setErrorMessage('Username Taken');
-      } else {
+        setErrorMessage('Missing email or password');
+      } else if(err.response?.status === 401){
+        setErrorMessage("Unauthorised")
+      }
+       else {
         setErrorMessage('Login Failed')
       }
     }
