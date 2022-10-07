@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import axios from 'axios';
 
 import { faCheck, faInfoCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,7 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import { USER_REGEX, PWD_REGEX, EMAIL_REGEX } from "../utils/regex"
 
 
-const REGISTER_URL = '/todos/1';
+const baseURL = "http://localhost:3011/register";
 
 export const Register = () => {
 
@@ -61,19 +62,12 @@ export const Register = () => {
         })
         e.preventDefault();
         try {
-            const users = await fetch("http://localhost:3010/register",
-                {
-                    method: "POST",
-                    body: JSON.stringify({
-                        name: user,
-                        email,
-                        password
-                    }),
-                    headers: { 'Content-Type': 'application/json' }
-                },
-            )
 
-            console.log(users);
+             await axios.post(baseURL, {
+                name: user,
+                email,
+                password
+            }).then((response: any) => console.log(response));
 
             setSuccess(true);
             setUser('');
