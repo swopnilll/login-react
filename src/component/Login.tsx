@@ -1,28 +1,31 @@
-import { Link } from 'react-router-dom'
-import { useState, useContext } from "react"
-
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { useState } from "react"
 import axios from "axios";
 
-import AuthContext from '../context/AuthProvider';
-import { useEffect } from 'react';
+import useAuth from '../hooks/useAuth';
 
 const baseURL = "http://localhost:3011/login";
 
 export const Login = () => {
 
-  const { setAuthenticatedUser } = useContext(AuthContext) as AuthProviderContextProps;
+  const location = useLocation();
+
+  const { authenticatedUser, setAuthenticatedUser } = useAuth();
+  console.log(authenticatedUser);
+
+  const navigate = useNavigate();
+  const from = location.state?.from?.pathname || "/allergy"
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
-      let apiResponse:UserAuth = {
+      let apiResponse: UserAuth = {
         id: 0,
         email: '',
         name: '',
@@ -36,20 +39,20 @@ export const Login = () => {
         })
         .then((response) => {
           apiResponse = response?.data?.data;
-          setSuccess(true);
         });
 
-      setAuthenticatedUser({ id: apiResponse?.id, accessToken: apiResponse?.accessToken, name: apiResponse?.name, email: apiResponse?.email })
+      setAuthenticatedUser({ id: apiResponse?.id, accessToken: apiResponse?.accessToken, name: apiResponse?.name, email: apiResponse?.email });
+      navigate(from, { replace: true});
 
     } catch (err: any) {
       if (!err?.response) {
         setErrorMessage('No Server Response');
       } else if (err.response?.status === 409) {
         setErrorMessage('Missing email or password');
-      } else if(err.response?.status === 401){
+      } else if (err.response?.status === 401) {
         setErrorMessage("Unauthorised")
       }
-       else {
+      else {
         setErrorMessage('Login Failed')
       }
     }
@@ -59,7 +62,7 @@ export const Login = () => {
   return (
     <div className="login-component">
       <p className={errorMessage ? "errmsg" : "offscreen"} aria-live="assertive">{errorMessage}</p>
-      <h1>Register</h1>
+      <h1>Login In</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">Email:</label>
         <input type="email"
@@ -82,7 +85,7 @@ export const Login = () => {
         <button>Login</button>
       </form>
       <div className='register-button'>
-        <Link to='/register'><button>Create Account</button></Link>
+        <Link to='/auth/register'><button>Create Account</button></Link>
       </div>
     </div >
   );
