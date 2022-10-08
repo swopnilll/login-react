@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import Users from '../component/Users';
 
 export const AllergiesPageWrapper = () => {
     const navigate = useNavigate();
@@ -9,6 +10,8 @@ export const AllergiesPageWrapper = () => {
         <>
             <h1>Allergy Page Wrapper</h1>
             <button onClick={goBack}>Back</button>
+
+            <Users />
         </>
     )
 }

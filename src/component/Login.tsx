@@ -1,4 +1,4 @@
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState } from "react"
 import axios from "axios";
 
@@ -10,8 +10,7 @@ export const Login = () => {
 
   const location = useLocation();
 
-  const { authenticatedUser, setAuthenticatedUser } = useAuth();
-  console.log(authenticatedUser);
+  const { setAuthenticatedUser } = useAuth();
 
   const navigate = useNavigate();
   const from = location.state?.from?.pathname || "/allergy"
