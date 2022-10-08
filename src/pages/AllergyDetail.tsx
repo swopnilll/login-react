@@ -1,14 +1,18 @@
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-export const AllergiesPageWrapper = () => {
+const AllergyDetail = () => {
+
     const navigate = useNavigate();
 
     const goBack = () => navigate(-1);
 
     return (
         <>
-            <h1>Allergy Page Wrapper</h1>
+            <div>AllergyDetail</div>
             <button onClick={goBack}>Back</button>
         </>
     )
 }
+
+export default AllergyDetail

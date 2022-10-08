@@ -5,11 +5,15 @@ import { faCheck, faInfoCircle, faTimes } from "@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react"
 import { USER_REGEX, PWD_REGEX, EMAIL_REGEX } from "../utils/regex"
+import useAuth from '../hooks/useAuth';
 
 
 const baseURL = "http://localhost:3011/register";
 
 export const Register = () => {
+
+    const {authenticatedUser} = useAuth();
+    console.log(authenticatedUser);
 
     const userRef = useRef<HTMLInputElement>(null);
     const errRef = useRef<HTMLInputElement>(null);
